@@ -6,6 +6,8 @@ import tkinter as tk
 import tkinter.font as tkfont
 import openpyxl
 
+ICON = r"C:\\Users\\nicho\\Desktop\\Dev Projects\\MTA Converter\\logo_TRG.ico"
+
 def open_file():
     """Using openpyxl to read excel file."""
 
@@ -114,7 +116,6 @@ root = tk.Tk()
 root.title("MTA Converter")
 root.geometry('{}x{}'.format(500, 920))
 root.resizable(width=FALSE, height=FALSE)
-ICON = r"C:\\Users\\nicho\\Desktop\\Dev Projects\\MTA Converter\\images\\logo_TRG.ico"
 
 try:
     root.iconbitmap(ICON)
@@ -150,52 +151,3 @@ btn_save = Button(frame1, text="SAVE", command=save_file,
 btn_save.grid(row=2, columnspan=4, padx=10, pady=10)
 
 root.mainloop()
-
-"""# Get the WP number
-            _wp = _sh.cell(row=_wp, column=1).value
-            print("WP: " + str(_wp))
-
-            # Get the WP title
-            _title = _sh.cell(row=_wp, column=2).value
-            print("Title: " + _title)
-
-            # Get the WP description
-            _desc = _sh.cell(row=_wp, column=3).value
-            print("Description: " + _desc)
-
-            # Get the WP ISB
-            _isb = _sh.cell(row=_wp, column=4).value
-            print("ISB: " + _isb)
-
-            # Get the WP ISB title
-            _isb_title = isb[_isb - 1]
-            print("ISB Title: " + _isb_title)
-
-            # Get the WP ISB description
-            _isb_desc = _sh.cell(row=_wp, column=5).value
-            print("ISB Description: " + _isb_desc)
-
-            # Get the WP ISB reference
-            _isb_ref = _sh.cell(row=_wp, column=6).value
-            print("ISB Reference: " + _isb_ref)
-
-            # Get the WP ISB reference title
-            _isb_ref_title = _sh.cell(row=_wp, column=7).value
-            print("ISB Reference Title: " + _isb_ref_title)
-
-            # Get the WP ISB reference description
-            _isb_ref_desc = _sh.cell(row=_wp, column=8).value
-            print("ISB Reference Description: " + _isb_ref_desc)
-
-            # Get the WP ISB reference reference
-            _isb_ref_ref = _sh.cell(row=_wp, column=9).value
-            print("ISB Reference Reference: " + _isb_ref_ref)
-
-            # Get the WP ISB reference reference title
-            _isb_ref_ref_title = _sh.cell(row=_wp, column=10).value
-            print("ISB Reference Reference Title: " + _isb_ref_ref_title)
-
-            # Get the WP ISB reference reference description
-            _isb_ref_ref_desc = _sh.cell(row=_wp, column=11).value
-            print("ISB Reference Reference Description: " + _isb_ref_ref
-"""
