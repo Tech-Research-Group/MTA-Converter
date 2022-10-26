@@ -7,7 +7,7 @@ import tkinter.font as tkfont
 import openpyxl
 
 ICON = r"C:\\Users\\nicho\\Desktop\\Dev Projects\\MTA Converter\\logo_TRG.ico"
-
+    
 def open_file():
     """Using openpyxl to read excel file."""
 
@@ -149,5 +149,6 @@ txt_output.configure(tabs=tab)
 btn_save = Button(frame1, text="SAVE", command=save_file,
     font='Helvetica 12 bold', width=45, bg="blue", fg="white")
 btn_save.grid(row=2, columnspan=4, padx=10, pady=10)
+
 
 root.mainloop()
