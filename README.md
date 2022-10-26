@@ -10,7 +10,7 @@ I recommend reordering the rows in your MTA spreadsheet to match the order of th
 template provided in this folder. This will allow the program to populate the initial setup box
 data in the correct sequence. 
 
-![ App UI ]()
+![ App UI ](https://github.com/Tech-Research-Group/MTA-Converter/blob/main/screenshot.png)
 
 If you find any bugs or have any suggestions for improvement, please 
 let Nick Ricci know so he can address them in future versions. Thanks!
