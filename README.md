@@ -1,4 +1,4 @@
-###MTA CONVERTER:
+# MTA CONVERTER:
 
 To use the MTA Converter simply type which row in your spreadsheet you would like to convert to a
 work package and select the spreadsheet file on your computer using the "Open File" button. Click
