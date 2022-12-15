@@ -60,7 +60,7 @@ def convert_file(path):
             messagebox.showerror("ERROR", "Please enter a valid row number.")
         else:
             txt_output.insert(
-                "1.0", "Initial Setup Box:\n\nTest Equipment:\n\n")
+                "1.0", "Initial Setup:\n\nTest Equipment:\n\n")
             # Iterate through excel and display data
             for j in range(1, _sh.max_column + 1):
                 headers = _sh.cell(row=2, column=j).value
