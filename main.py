@@ -9,7 +9,16 @@ from tkinter.constants import END, FALSE
 import openpyxl
 
 ICON = r"C:\\Users\\nicho\\Desktop\\Dev Projects\\MTA Converter\\logo_TRG.ico"
-
+# List containing all the ISB titles
+isb = [
+    "Test and Diagnostic Equipment",
+    "Tools",
+    "Materials",
+    "MRP",
+    "MOS",
+    "References",
+    "Equipment Condition"
+]
 
 def open_file():
     """Using openpyxl to read excel file."""
@@ -32,18 +41,6 @@ def open_file():
 
 def convert_file(path):
     """Converts MTA spreadsheet to OneNote style documentation."""
-
-    # List containing all the ISB titles
-    isb = [
-        "Test Equipment",
-        "Tools",
-        "Materials",
-        "MRP",
-        "MOS",
-        "References",
-        "Equipment Condition"
-    ]
-
     # Clear the text box
     txt_output.delete(1.0, END)
 
@@ -58,52 +55,74 @@ def convert_file(path):
         # Check if the row number is valid
         if _wp > _sh.max_row:
             messagebox.showerror("ERROR", "Please enter a valid row number.")
+        elif _wp < _sh.min_row:
+            messagebox.showerror("ERROR", "Please enter a valid row number.")
+        elif not _wp:
+            messagebox.showerror("ERROR", "Please enter a wp row number to search by.")
         else:
-            txt_output.insert(
-                "1.0", "Initial Setup:\n\nTest Equipment:\n\n")
+
             # Iterate through excel and display data
-            for j in range(1, _sh.max_column + 1):
-                headers = _sh.cell(row=2, column=j).value
-                cell_obj = _sh.cell(row=_wp, column=j)
+            for col in range(1, _sh.max_column + 1):
+                headers = _sh.cell(row=2, column=col).value
+                cell_obj = _sh.cell(row=_wp, column=col)
                 cells = str(cell_obj.value).split("\t")
-                for j in cells:
-                    # if j != "None" and j != "N/A" and j != "n/a" and j != "":
-                    if j not in ["None", "N/A", "n/a", ""]:
-                        # if j not in ["None", "N/A", ""]:
-                        # if headers == isb[0]:   # Test Equipment
-                        # txt_output.insert(END, "Test Equipment:\n")
-                        # txt_output.insert(END, j + "\n\n")
+
+                for col in cells:
+                    if col not in ["None", "N/A", "n/a", ""]:
+                        if headers == "Component Name":
+                            txt_output.insert(END, f"{col} (")
+                        if headers == "Maintainer Task":
+                            txt_output.insert(END, f"{col})\n\n")
+                        if headers == isb[0]:   # Test Equipment
+                            txt_output.insert(END, "Test Equipment:\n")
+                            txt_output.insert(END, col + "\n\n")
                         if headers == isb[1]:  # Tools
-                            tools = j.split(",")
                             txt_output.insert(END, headers + ":\n")
+                            tools = col.split("\n")
+                            tool_list = []
                             for tool in tools:
-                                if tool.startswith(" "):
-                                    txt_output.insert(END, tool[1:] + "\n")
-                                else:
-                                    txt_output.insert(END, tool + "\n")
+                                if "GMTK" in tool:
+                                    print("GMTK tool: " + tool)
+                                    if "Tool Kit, General Mechanic's" not in tool_list:
+                                        tool_list.append("Tool Kit, General Mechanic's")
+                                elif "SATS" in tool:
+                                    print("SATS tool: " + tool)
+                                    if "Tool Set, SATS, Base" not in tool_list:
+                                        tool_list.append("Tool Set, SATS, Base")
+                                elif "GMTK" not in tool and "SATS" not in tool:
+                                    print("Other tool: " + tool)
+                                    tool_list.append(tool)
+                            for tool in tool_list:
+                                txt_output.insert(END, tool + "\n")
                             txt_output.insert(END, "\nMaterials:\n")
-                        elif headers == "Exp/Dur":  # Materials
-                            txt_output.insert(END, j + "\n")
-                        elif headers == "Replacement Parts":  # Materials
-                            txt_output.insert(END, j + "\n")
-                        elif headers == isb[3]:  # MRP
+
+                        if headers == "Replacement Parts":
+                            parts = col.split("\n")
+                            materials = list(parts)
+                        if headers == "Exp/Dur":
+                            expendables = col.split("\n")
+                            for expendable in expendables:
+                                materials.append(expendable)
+                            for material in materials:
+                                txt_output.insert(END, material + "\n")
+                        if headers == isb[3]:  # MRP
                             txt_output.insert(
-                                END, "\nMaterial Replacement Parts:\n")
-                            txt_output.insert(END, j + "\n")
-                        elif headers == isb[4]:  # Personnel
+                                END, "\nMandatory Replacement Parts:\n")
+                            mrp_list = col.split("\n")
+                            for mrp in mrp_list:
+                                txt_output.insert(END, mrp + "\n")
+                        if headers == isb[4]:  # Personnel
                             txt_output.insert(END, "\nPersonnel:\n")
-                            txt_output.insert(END, f"{headers} : {j}\n")
-                        elif headers == "Personnel Required":
-                            if int(j) >= 2:
-                                txt_output.insert(END, j + " people\n\n")
+                            txt_output.insert(END, f"{headers} : {col}\n")
+                        if headers == "Personnel Required":
+                            if int(col) >= 2:
+                                txt_output.insert(END, col + " people\n\n")
                                 txt_output.insert(END, "References:\n\n")
                                 txt_output.insert(
                                     END, "Equipment Description:\n\n")
                             else:
-                                txt_output.insert(END, j + " person\n\n")
-                                txt_output.insert(END, "References:\n\n")
-                                txt_output.insert(
-                                    END, "Equipment Description:\n\n")
+                                txt_output.insert(END, col + " person\n\n")
+                                txt_output.insert(END, "References:\n\n", END, "Equipment Description:\n\n")
     except InvalidFileException:
         messagebox.showerror("ERROR", "Please select a valid file.")
     except ValueError:
@@ -125,7 +144,7 @@ def save_file():
 
 root = tk.Tk()
 root.title("MTA Converter")
-root.geometry('500x920')
+root.geometry('750x920')
 root.resizable(width=FALSE, height=FALSE)
 
 with contextlib.suppress(tk.TclError):
@@ -134,29 +153,30 @@ with contextlib.suppress(tk.TclError):
 frame1 = Frame(root)
 frame1.grid(row=0, columnspan=4)
 
-lbl_row = Label(frame1, text="WP Row:", font='Helvetica 12 bold')
+lbl_row = Label(frame1, text="WP ROW:", font='Helvetica 12 bold')
 lbl_row.grid(row=0, column=0, padx=10, pady=20)
 
-txt_row = Entry(frame1, width=10, font='Helvetica 12',
+txt_row = Entry(frame1, width=14, font='Helvetica 12',
                 bg="#FFFFFF", fg="#000000")
 txt_row.grid(row=0, column=1, padx=10, pady=20)
 
-btn_open = Button(frame1, text="Open File", command=open_file, width=10,
+btn_open = Button(frame1, text="Open File", command=open_file, width=20,
                   font='Helvetica 12 bold', bg="blue", fg="white")
 btn_open.grid(row=0, column=2, padx=10, pady=20)
 
-btn_convert = Button(frame1, text="Convert", width=10,
+btn_convert = Button(frame1, text="Convert", width=20,
                      font='Helvetica 12 bold', bg="blue", fg="white")
 btn_convert.grid(row=0, column=3, padx=10, pady=20)
 
-txt_output = Text(frame1, font='Menlo 12', height=44, width=53)
+# txt_output = Text(frame1, font='Menlo 12', height=44, width=53)
+txt_output = Text(frame1, font='Menlo 12', height=44, width=81)
 txt_output.grid(row=1, columnspan=4, padx=10)
 font = tkfont.Font(font=txt_output['font'])
 tab = font.measure("    ")
 txt_output.configure(tabs=tab)
 
 btn_save = Button(frame1, text="SAVE", command=save_file,
-                  font='Helvetica 12 bold', width=45, bg="blue", fg="white")
+                  font='Helvetica 12 bold', width=72, bg="blue", fg="white")
 btn_save.grid(row=2, columnspan=4, padx=10, pady=10)
 
 
