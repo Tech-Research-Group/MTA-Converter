@@ -79,21 +79,25 @@ def convert_file(path):
                         if headers == isb[1]:  # Tools
                             txt_output.insert(END, headers + ":\n")
                             tools = col.split("\n")
-                            tool_list = []
-                            for tool in tools:
-                                if "GMTK" in tool:
-                                    print("GMTK tool: " + tool)
-                                    if "Tool Kit, General Mechanic's" not in tool_list:
-                                        tool_list.append("Tool Kit, General Mechanic's")
-                                elif "SATS" in tool:
-                                    print("SATS tool: " + tool)
-                                    if "Tool Set, SATS, Base" not in tool_list:
-                                        tool_list.append("Tool Set, SATS, Base")
-                                elif "GMTK" not in tool and "SATS" not in tool:
-                                    print("Other tool: " + tool)
-                                    tool_list.append(tool)
-                            for tool in tool_list:
-                                txt_output.insert(END, tool + "\n")
+                            # tool_list = []
+                            # for tool in tools:
+                            #     if "GMTK" in tool:
+                            #         print("GMTK tool: " + tool)
+                            #         if "Tool Kit, General Mechanic's" not in tool_list:
+                            #             tool_list.append("Tool Kit, General Mechanic's")
+                            #     elif "SATS" in tool:
+                            #         print("SATS tool: " + tool)
+                            #         if "Tool Set, SATS, Base" not in tool_list:
+                            #             tool_list.append("Tool Set, SATS, Base")
+                            #     elif "GMTK" not in tool and "SATS" not in tool:
+                            #         print("Other tool: " + tool)
+                            #         tool_list.append(tool)
+                            for tool in tools: # was tool_list
+                                if "SATS" in tool:
+                                    sats_tool = tool.split("(")
+                                    txt_output.insert(END, sats_tool[0][:-1].upper() + " (PART OF SATS)\n")
+                                else:
+                                    txt_output.insert(END, tool.upper() + "\n")
                             txt_output.insert(END, "\nMaterials:\n")
 
                         if headers == "Replacement Parts":
