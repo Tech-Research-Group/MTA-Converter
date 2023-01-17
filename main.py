@@ -43,6 +43,8 @@ def convert_file(path):
     """Converts MTA spreadsheet to OneNote style documentation."""
     # Clear the text box
     txt_output.delete(1.0, END)
+    global materials
+    materials = []
 
     try:
         # Get row number from user
@@ -73,48 +75,45 @@ def convert_file(path):
                             txt_output.insert(END, f"{col} (")
                         if headers == "Maintainer Task":
                             txt_output.insert(END, f"{col})\n\n")
+                            txt_output.insert(END, "WPID: \n\n")
+                        
                         if headers == isb[0]:   # Test Equipment
                             txt_output.insert(END, "Test Equipment:\n")
                             txt_output.insert(END, col + "\n\n")
+                        
                         if headers == isb[1]:  # Tools
                             txt_output.insert(END, headers + ":\n")
                             tools = col.split("\n")
-                            # tool_list = []
-                            # for tool in tools:
-                            #     if "GMTK" in tool:
-                            #         print("GMTK tool: " + tool)
-                            #         if "Tool Kit, General Mechanic's" not in tool_list:
-                            #             tool_list.append("Tool Kit, General Mechanic's")
-                            #     elif "SATS" in tool:
-                            #         print("SATS tool: " + tool)
-                            #         if "Tool Set, SATS, Base" not in tool_list:
-                            #             tool_list.append("Tool Set, SATS, Base")
-                            #     elif "GMTK" not in tool and "SATS" not in tool:
-                            #         print("Other tool: " + tool)
-                            #         tool_list.append(tool)
+                            
                             for tool in tools: # was tool_list
+                                if "GMTK" in tool:
+                                    txt_output.insert(END, "Tool Kit, General Mechanic's\n")
                                 if "SATS" in tool:
                                     sats_tool = tool.split("(")
-                                    txt_output.insert(END, sats_tool[0][:-1].upper() + " (PART OF SATS)\n")
-                                else:
-                                    txt_output.insert(END, tool.upper() + "\n")
+                                    txt_output.insert(END, sats_tool[0][:-1] + " (PART OF SATS)\n")
+                                if "GMTK" not in tool and "SATS" not in tool:
+                                    txt_output.insert(END, tool + "\n")
                             txt_output.insert(END, "\nMaterials:\n")
 
                         if headers == "Replacement Parts":
-                            parts = col.split("\n")
-                            materials = list(parts)
+                            if col not in ["None", "N/A", "n/a", ""]:
+                                parts = col.split("\n")
+                                materials = list(parts)
                         if headers == "Exp/Dur":
-                            expendables = col.split("\n")
+                            if col not in ["None", "N/A", "n/a", ""]:
+                                expendables = col.split("\n")
                             for expendable in expendables:
                                 materials.append(expendable)
                             for material in materials:
                                 txt_output.insert(END, material + "\n")
+                        
                         if headers == isb[3]:  # MRP
                             txt_output.insert(
                                 END, "\nMandatory Replacement Parts:\n")
                             mrp_list = col.split("\n")
                             for mrp in mrp_list:
                                 txt_output.insert(END, mrp + "\n")
+                        
                         if headers == isb[4]:  # Personnel
                             txt_output.insert(END, "\nPersonnel:\n")
                             txt_output.insert(END, f"{headers} : {col}\n")
