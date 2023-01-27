@@ -90,7 +90,7 @@ def convert_file(path):
                                 txt_output.insert(END, "Tool Kit, General Mechanic&apos;s\n")
                             if "SATS" in tool:
                                 sats_tool = tool.split("(")
-                                txt_output.insert(END, sats_tool[0][:-1] + " (SATS)\n")
+                                txt_output.insert(END, sats_tool[0][:-1] + " (PART OF SATS)\n")
                             if "GMTK" not in tool and "SATS" not in tool:
                                 txt_output.insert(END, tool + "\n")
                         txt_output.insert(END, "\nMaterials:\n")
@@ -183,7 +183,7 @@ def get_task_description(path):
                 tasks = col.split("\n")
                 for task in tasks:
                     if "***" not in task and "###" not in task:
-                        txt_output.insert(END, f".{task[:-1]}\n\n")
+                        txt_output.insert(END, f".{task}\n\n")
                     else:
                         txt_output.insert(END, f".{task[3:-3].upper()}: \n\n")
 
