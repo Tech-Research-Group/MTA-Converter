@@ -6,6 +6,8 @@ from plistlib import InvalidFileException
 from tkinter import Button, Entry, Frame, Label, Text, filedialog, messagebox
 from tkinter.constants import END, FALSE
 import openpyxl
+import pyperclip
+
 
 
 ICON = r"C:\\Users\\nicho\\Desktop\\Dev Projects\\MTA Converter\\logo_TRG.ico"
@@ -20,7 +22,7 @@ isb = [
     "Equipment Condition"
 ]
 
-def open_file():
+def open_file() -> None:
     """Using openpyxl to read excel file."""
 
     # Enable convert button
@@ -39,12 +41,10 @@ def open_file():
         messagebox.showerror("ERROR", "Please select a valid file.")
 
 
-def convert_file(path):
+def convert_file(path) -> None:
     """Converts MTA spreadsheet to OneNote style documentation."""
     # Clear the text box
     txt_output.delete(1.0, END)
-    # global materials
-    # materials = []
 
     try:
         # Get row number from user
@@ -162,7 +162,7 @@ def convert_file(path):
     except ValueError:
         messagebox.showerror("ERROR", "Please enter a valid row number.")
 
-def get_task_description(path):
+def get_task_description(path) -> None:
     """Selects the data from Task Description column and parses each task into a step."""
     # Get row number from user
     _wp = int(txt_row.get())
@@ -187,7 +187,7 @@ def get_task_description(path):
                     else:
                         txt_output.insert(END, f".{task[3:-3].upper()}: \n\n")
 
-def save_file():
+def save_file() -> None:
     """Save the converted file to a text file."""
     try:
         onenote = txt_output.get(1.0, END)
@@ -199,23 +199,37 @@ def save_file():
     except FileNotFoundError:
         messagebox.showerror("ERROR", "File not saved.")
 
+def copy2clipboard() -> None:
+    """Copies the formatted OneNote data to active clipboard."""
+    if txt_output.get(1.0, END) != "":
+        pyperclip.copy(txt_output.get(1.0, END))
+        cb = pyperclip.paste()
+        messagebox.showinfo("COPIED!", "Copied to clipboard complete.")
+    elif txt_output.get(1.0, END) == "":
+        messagebox.showerror("ERROR", "Nothing to copy to clipboard. Please run the program first.")
+
+def clear() -> None:
+    """Clears results from the text field."""
+    txt_output.delete(1.0, END)
 
 root = tk.Tk()
 root.title("MTA Converter")
-root.geometry('750x920')
+root.geometry('753x960')
 root.resizable(width=FALSE, height=FALSE)
+root.config(bg='gray')
 
 with contextlib.suppress(tk.TclError):
     root.iconbitmap(ICON)
+
 # Create a Frame
-frame1 = Frame(root)
+frame1 = Frame(root, bg='gray')
 frame1.grid(row=0, columnspan=4)
 
-lbl_row = Label(frame1, text="WP ROW:", font='Helvetica 12 bold')
+lbl_row = Label(frame1, text="WP ROW:", font='Helvetica 12 bold', bg='gray')
 lbl_row.grid(row=0, column=0, padx=10, pady=20)
 
 txt_row = Entry(frame1, width=14, font='Helvetica 12',
-                bg="#FFFFFF", fg="#000000")
+                bg='#e0e0e0', fg="#000000")
 txt_row.grid(row=0, column=1, padx=10, pady=20)
 
 btn_open = Button(frame1, text="Open File", command=open_file, width=20,
@@ -227,15 +241,22 @@ btn_convert = Button(frame1, text="Convert", width=20,
 btn_convert.grid(row=0, column=3, padx=10, pady=20)
 
 # txt_output = Text(frame1, font='Menlo 12', height=44, width=53)
-txt_output = Text(frame1, font='Menlo 12', height=44, width=81)
+txt_output = Text(frame1, font='Menlo 12', height=44, width=81, bg='#e0e0e0')
 txt_output.grid(row=1, columnspan=4, padx=10)
 font = tkfont.Font(font=txt_output['font'])
 tab = font.measure("    ")
 txt_output.configure(tabs=tab)
 
-btn_save = Button(frame1, text="SAVE", command=save_file,
-                  font='Helvetica 12 bold', width=72, bg="blue", fg="white")
-btn_save.grid(row=2, columnspan=4, padx=10, pady=10)
+btn_save = Button(frame1, text="Save", command=save_file, height=3,
+                  font='Helvetica 12 bold', width=24, bg="blue", fg="white")
+btn_save.grid(row=2, columnspan=2, pady=10)
 
+btn_clear = Button(frame1, text="Clear", command=clear, height=3,
+                  font='Helvetica 12 bold', width=20, bg="blue", fg="white")
+btn_clear.grid(row=2, column=2, padx=10, pady=10)
+
+btn_cb = Button(frame1, text="Copy to Clipboard", command=copy2clipboard, height=3,
+                  font='Helvetica 12 bold', width=22, bg="blue", fg="white")
+btn_cb.grid(row=2, column=3, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
